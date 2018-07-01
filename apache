@@ -1,0 +1,48 @@
+Pense bete Apache
+
+
+Etape pour configurer un apache proprement : 
+----------------------------------------------------------------------------------------------------
+Ajouter le nom de domaine souhaité dans le fichier /etc/hosts
+
+127.0.0.1       <nom_de_serveur_souhaite> <alias_nom_de_serveur_souhaite>
+
+Puis ajouter un fichier de configuration dans /etc/apache2/sites-available
+
+Avec ce contenu
+
+<VirtualHost *:80>
+        # Nom de domaine
+        ServerName <alias_nom_de_serveur_souhaite>
+        # Alias
+        ServerAlias <alias_nom_de_serveur_souhaite>
+        # Logs d'erreur 
+        ErrorLog path/des/erreurs/logs/apache
+        #logs de connexion
+        CustomLog path/des/logs/acces/au/serveur common
+        DocumentRoot path/racine/projet
+        <Directory path/racine/projet>
+                Options -Indexes +FollowSymLinks +MultiViews
+                AllowOverride All
+                Require all granted
+        </Directory>
+</VirtualHost>
+----------------------------------------------------------------------------------------------------
+
+Exemple de VirtualHost proxy qui redirige les requetes http vers l'api gratuite en ligne randomUser
+----------------------------------------------------------------------------------------------------
+
+<VirtualHost *:80>
+    ServerName cups.domaine.fr
+
+    CustomLog /var/log/apache2/ssl_reverse.log combined
+    SSLProxyEngine On
+
+    ProxyPass / https://randomuser.me/api/
+    ProxyPassReverse / https://randomuser.me/api/
+    ProxyRequests Off
+</VirtualHost>
+----------------------------------------------------------------------------------------------------
+
+
+
